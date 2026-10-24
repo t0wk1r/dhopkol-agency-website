@@ -953,9 +953,11 @@
 /* Preloader */
 
 .preloader-dots {
+    --preloader-dot-color: rgba(42, 107, 155, 0.3);
+
     background-image: radial-gradient(
         circle,
-        rgba(113, 187, 170, 0.45) 2px,
+        var(--preloader-dot-color) 2px,
         transparent 3px
     );
 
@@ -977,6 +979,10 @@
     animation: preloader-dots-breathe 1600ms ease-in-out infinite alternate;
 }
 
+.dark .preloader-dots {
+    --preloader-dot-color: rgba(113, 187, 170, 0.45);
+}
+
 @keyframes preloader-dots-breathe {
     from {
         opacity: 0.35;
@@ -992,9 +998,5 @@
 @media (prefers-reduced-motion: reduce) {
     .preloader-dots {
         animation: none;
-    }
-
-    .site-preloader {
-        transition: none;
     }
 }
