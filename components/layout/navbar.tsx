@@ -18,8 +18,6 @@ import {
 
 import ThemeToggle from "@/components/theme-toggle";
 
-/* Navigation */
-
 const navigation = [
     { name: "Projects", href: "/projects" },
     { name: "Technologies", href: "/technologies" },
@@ -49,8 +47,6 @@ const services = [
     },
 ];
 
-/* Navbar */
-
 export default function Navbar() {
     const pathname = usePathname();
 
@@ -65,7 +61,7 @@ export default function Navbar() {
 
     useEffect(() => {
         function handleScroll() {
-            setScrolled(window.scrollY > 20);
+            setScrolled(window.scrollY > 40);
         }
 
         function handlePointerDown(event: PointerEvent) {
@@ -87,14 +83,19 @@ export default function Navbar() {
 
         handleScroll();
 
-        window.addEventListener("scroll", handleScroll, { passive: true });
+        window.addEventListener("scroll", handleScroll, {
+            passive: true,
+        });
         window.addEventListener("resize", handleResize);
         document.addEventListener("pointerdown", handlePointerDown);
 
         return () => {
             window.removeEventListener("scroll", handleScroll);
             window.removeEventListener("resize", handleResize);
-            document.removeEventListener("pointerdown", handlePointerDown);
+            document.removeEventListener(
+                "pointerdown",
+                handlePointerDown
+            );
         };
     }, []);
 
@@ -103,10 +104,11 @@ export default function Navbar() {
 
         if (!drawer || !mobileOpen) return;
 
-        drawer.showModal();
+        if (!drawer.open) {
+            drawer.showModal();
+        }
 
         const previousOverflow = document.body.style.overflow;
-
         document.body.style.overflow = "hidden";
 
         return () => {
@@ -138,7 +140,9 @@ export default function Navbar() {
 
     function underlineClass(active: boolean) {
         return `absolute right-3 bottom-0 left-3 h-0.5 rounded-full bg-primary transition-transform ${
-            active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+            active
+                ? "scale-x-100"
+                : "scale-x-0 group-hover:scale-x-100"
         }`;
     }
 
@@ -150,19 +154,33 @@ export default function Navbar() {
         }`;
     }
 
-    const solidHeader = scrolled || mobileOpen || pathname !== "/";
+    const solidHeader = mobileOpen || pathname !== "/";
 
     return (
         <>
             <header
-                className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-300 ${
-                    solidHeader
-                        ? "border-line bg-background/95 shadow-sm backdrop-blur-xl"
-                        : "border-transparent bg-transparent"
+                className={`fixed inset-x-0 top-0 z-50 transition-[padding] duration-300 motion-reduce:transition-none ${
+                    scrolled
+                        ? "px-3 pt-3 sm:px-6 sm:pt-4"
+                        : "px-0 pt-0"
                 }`}
             >
-                <div className="site-container">
-                    <div className="flex h-20 items-center justify-between gap-4">
+                <div
+                    className={`mx-auto w-full border transition-[max-width,border-radius,border-color,background-color,box-shadow] duration-300 motion-reduce:transition-none ${
+                        scrolled
+                            ? "max-w-[1280px] rounded-2xl border-line bg-background/95 shadow-[0_8px_32px_-12px_rgba(15,23,42,0.25)] backdrop-blur-xl dark:shadow-[0_8px_32px_-12px_rgba(0,0,0,0.5)]"
+                            : solidHeader
+                              ? "max-w-full rounded-none border-transparent border-b-line bg-background/95 backdrop-blur-xl"
+                              : "max-w-full rounded-none border-transparent bg-transparent"
+                    }`}
+                >
+                    <div
+                        className={`mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4 transition-[height,padding] duration-300 motion-reduce:transition-none ${
+                            scrolled
+                                ? "h-18 px-4 sm:px-6"
+                                : "h-20 px-5 sm:px-8 lg:px-10"
+                        }`}
+                    >
                         {/* Brand */}
                         <Link
                             href="/"
@@ -175,7 +193,8 @@ export default function Navbar() {
                             </span>
 
                             <span className="text-[23px] font-bold tracking-[-0.06em] text-heading">
-                                dhopkol<span className="text-primary">.</span>
+                                dhopkol
+                                <span className="text-primary">.</span>
                             </span>
                         </Link>
 
@@ -187,11 +206,12 @@ export default function Navbar() {
                             <Link
                                 href="/"
                                 onClick={closeMenus}
-                                aria-current={isActive("/") ? "page" : undefined}
+                                aria-current={
+                                    isActive("/") ? "page" : undefined
+                                }
                                 className={desktopLinkClass("/")}
                             >
                                 Home
-
                                 <span
                                     aria-hidden="true"
                                     className={underlineClass(isActive("/"))}
@@ -235,7 +255,8 @@ export default function Navbar() {
 
                                     if (
                                         event.key === "ArrowDown" &&
-                                        event.target === servicesButtonRef.current
+                                        event.target ===
+                                            servicesButtonRef.current
                                     ) {
                                         event.preventDefault();
                                         setServicesOpen(true);
@@ -256,7 +277,9 @@ export default function Navbar() {
                                     aria-expanded={servicesOpen}
                                     aria-controls="desktop-services"
                                     onClick={() =>
-                                        setServicesOpen((previous) => !previous)
+                                        setServicesOpen(
+                                            (previous) => !previous
+                                        )
                                     }
                                     className={desktopLinkClass("/services")}
                                 >
@@ -273,12 +296,12 @@ export default function Navbar() {
                                     <span
                                         aria-hidden="true"
                                         className={underlineClass(
-                                            isActive("/services") || servicesOpen
+                                            isActive("/services") ||
+                                                servicesOpen
                                         )}
                                     />
                                 </button>
 
-                                {/* Padding bridges the gap for pointer movement */}
                                 <div
                                     id="desktop-services"
                                     hidden={!servicesOpen}
@@ -323,6 +346,7 @@ export default function Navbar() {
                                             className="flex items-center justify-between border-t border-line bg-surface px-5 py-4 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
                                         >
                                             Explore all services
+
                                             <ArrowRight
                                                 size={15}
                                                 aria-hidden="true"
@@ -338,7 +362,9 @@ export default function Navbar() {
                                     href={item.href}
                                     onClick={closeMenus}
                                     aria-current={
-                                        isActive(item.href) ? "page" : undefined
+                                        isActive(item.href)
+                                            ? "page"
+                                            : undefined
                                     }
                                     className={desktopLinkClass(item.href)}
                                 >
@@ -436,7 +462,8 @@ export default function Navbar() {
                             </span>
 
                             <span className="text-[23px] font-bold tracking-[-0.06em]">
-                                dhopkol<span className="text-primary">.</span>
+                                dhopkol
+                                <span className="text-primary">.</span>
                             </span>
                         </Link>
 
@@ -458,6 +485,7 @@ export default function Navbar() {
                     {/* Drawer links */}
                     <nav
                         aria-label="Mobile navigation"
+                        data-lenis-prevent
                         className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-6"
                     >
                         <p className="mb-4 px-4 text-[10px] font-semibold tracking-[0.18em] text-body uppercase">
@@ -468,7 +496,9 @@ export default function Navbar() {
                             <Link
                                 href="/"
                                 onClick={closeMenus}
-                                aria-current={isActive("/") ? "page" : undefined}
+                                aria-current={
+                                    isActive("/") ? "page" : undefined
+                                }
                                 className={mobileLinkClass("/")}
                             >
                                 Home
@@ -516,6 +546,7 @@ export default function Navbar() {
                                         className="flex items-center gap-2 px-3 py-3 text-xs font-semibold text-primary"
                                     >
                                         All services
+
                                         <ArrowRight
                                             size={14}
                                             aria-hidden="true"
@@ -530,7 +561,9 @@ export default function Navbar() {
                                     href={item.href}
                                     onClick={closeMenus}
                                     aria-current={
-                                        isActive(item.href) ? "page" : undefined
+                                        isActive(item.href)
+                                            ? "page"
+                                            : undefined
                                     }
                                     className={mobileLinkClass(item.href)}
                                 >
