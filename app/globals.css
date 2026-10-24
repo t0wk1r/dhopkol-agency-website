@@ -948,3 +948,53 @@
         animation: none;
     }
 }
+
+
+/* Preloader */
+
+.preloader-dots {
+    background-image: radial-gradient(
+        circle,
+        rgba(113, 187, 170, 0.45) 2px,
+        transparent 3px
+    );
+
+    background-size: 40px 36px;
+    background-position: center;
+
+    -webkit-mask-image: radial-gradient(
+        ellipse at center,
+        #000 20%,
+        transparent 72%
+    );
+
+    mask-image: radial-gradient(
+        ellipse at center,
+        #000 20%,
+        transparent 72%
+    );
+
+    animation: preloader-dots-breathe 1600ms ease-in-out infinite alternate;
+}
+
+@keyframes preloader-dots-breathe {
+    from {
+        opacity: 0.35;
+        transform: scale(0.94);
+    }
+
+    to {
+        opacity: 0.85;
+        transform: scale(1.03);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .preloader-dots {
+        animation: none;
+    }
+
+    .site-preloader {
+        transition: none;
+    }
+}

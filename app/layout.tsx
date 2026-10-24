@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import ThemeProvider from "@/components/theme-provider";
 import SupportChat from "@/components/shared/support-chat";
+import Preloader from "@/components/shared/preloader";
 
 import "./globals.css";
 
@@ -40,6 +41,7 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans text-body`}
             >
                 <ThemeProvider>
+                    <Preloader />
                     <Navbar />
                     {children}
                     <Footer />
