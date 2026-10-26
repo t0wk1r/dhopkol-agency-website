@@ -2,11 +2,17 @@
 
 import { useEffect, useRef } from "react";
 
+import type { ReactNode } from "react";
+
+type ScrollRevealProps = {
+    children: ReactNode;
+    className?: string;
+};
+
 export default function ScrollReveal({
     children,
-}: {
-    children: React.ReactNode;
-}) {
+    className,
+}: ScrollRevealProps) {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -20,8 +26,13 @@ export default function ScrollReveal({
 
         if (motionPreference.matches) return;
 
-        const elements =
+        const targets =
             container.querySelectorAll<HTMLElement>("[data-reveal]");
+
+        const elements: HTMLElement[] =
+            targets.length > 0
+                ? Array.from(targets)
+                : [container];
 
         const animations: Animation[] = [];
 
@@ -45,7 +56,8 @@ export default function ScrollReveal({
                         ],
                         {
                             duration: 1000,
-                            delay: Number(element.dataset.revealDelay || 0),
+                            delay:
+                                Number(element.dataset.revealDelay) || 0,
                             easing: "cubic-bezier(0.16, 1, 0.3, 1)",
                             fill: "backwards",
                         }
@@ -54,6 +66,7 @@ export default function ScrollReveal({
                     element.style.removeProperty("opacity");
 
                     animations.push(animation);
+
                     observer.unobserve(element);
                 });
             },
@@ -62,6 +75,11 @@ export default function ScrollReveal({
                 rootMargin: "0px 0px -30px 0px",
             }
         );
+
+        // Preserve the existing layout for data-reveal containers.
+        if (!className && targets.length > 0) {
+            container.style.display = "contents";
+        }
 
         elements.forEach((element) => {
             element.style.opacity = "0";
@@ -72,6 +90,7 @@ export default function ScrollReveal({
             if (!motionPreference.matches) return;
 
             observer.disconnect();
+
             animations.forEach((animation) => animation.cancel());
 
             elements.forEach((element) => {
@@ -83,18 +102,21 @@ export default function ScrollReveal({
 
         return () => {
             observer.disconnect();
+
             animations.forEach((animation) => animation.cancel());
 
             elements.forEach((element) => {
                 element.style.removeProperty("opacity");
             });
 
+            container.style.removeProperty("display");
+
             motionPreference.removeEventListener("change", stopMotion);
         };
-    }, []);
+    }, [className]);
 
     return (
-        <div ref={containerRef} className="contents">
+        <div ref={containerRef} className={className}>
             {children}
         </div>
     );
